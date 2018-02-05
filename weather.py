@@ -13,12 +13,6 @@ import json
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'hardtoguessstring'
 
-app.config["SQLALCHEMY_DATABASE_URI"] = ""
-## Provided:
-app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-db = SQLAlchemy(app)
 
 class WeatherEntryForm(FlaskForm):
     zip= StringField("Enter Zip code:", validators=[Required()])
