@@ -2,7 +2,6 @@ from flask import Flask, request, render_template, url_for, flash, redirect, ses
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, RadioField, IntegerField, ValidationError
 from wtforms.validators import Required
-from flask_sqlalchemy import SQLAlchemy
 
 
 
