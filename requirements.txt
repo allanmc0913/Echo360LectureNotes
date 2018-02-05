@@ -6,3 +6,4 @@ SQLAlchemy==1.1.15
 requests==2.18.4
 jsondatabase==0.1.7
 jsonschema==2.6.0
+gunicorn==19.0.0
