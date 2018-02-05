@@ -1,1 +1,0 @@
-web: gunicorn frozen-gorge-85984.wsgi --log-file -
