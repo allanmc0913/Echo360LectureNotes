@@ -1,1 +1,1 @@
-web: gunicorn --debug run:app --log-file=-
+web: gunicorn frozen-gorge-85984.wsgi --log-file -
