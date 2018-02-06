@@ -1,6 +1,6 @@
 {% block content %}
   <h1>Weather Entry Form</h1>
-  <form method="POST" action="http://localhost:5000/weather_result">
+  <form method="POST" action="/weather_result">
       {{ form.hidden_tag() }}
       {{ form.csrf_token }}
       {% for message in get_flashed_messages() %}
