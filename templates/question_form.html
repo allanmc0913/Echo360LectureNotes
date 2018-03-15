@@ -1,0 +1,16 @@
+
+{% block content %}
+
+{% endblock %}
+
+<h1>Question Entry Form</h1>
+<form method="POST" action="http://localhost:5000/question_result">
+    {{ form.csrf_token }}
+    {% for message in get_flashed_messages() %}
+        {{ message }}
+    {% endfor %}
+    <p>{{ form.question.label }}{{ form.question() }}</p>
+    {{ form.submit() }}
+</form>
+
+

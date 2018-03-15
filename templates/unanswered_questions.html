@@ -1,0 +1,15 @@
+
+{% block content %}
+
+
+
+<h1>These are the unanswered questions from student</h1>
+    <form method="post" action="http://localhost:5000/unanswered_questions">
+        <p>{{ q1 }}</p>
+        {{ form.a1() }}
+        {{ form.submit() }}
+    </form>
+
+{% endblock %}
+
+
