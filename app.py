@@ -1,47 +1,174 @@
-from flask import Flask, request, render_template, url_for, flash, redirect
+from flask import Flask, request, render_template, url_for, flash, redirect, session
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, RadioField, IntegerField, ValidationError
+from wtforms import StringField, SubmitField, RadioField, IntegerField, ValidationError, TextAreaField
 from wtforms.validators import Required
+from flask_sqlalchemy import SQLAlchemy
 
+from flask_script import Manager, Shell
 import requests
+import json
 
+
+
+import pandas as pd
+import gensim
+from nltk.tokenize import word_tokenize
+import numpy as np
+
+#########################
+##### App/DB Setup #####
+#########################
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'hardtoguessstring'
 
-class WeatherEntryForm(FlaskForm):
-    zip= StringField("Enter Zip code:", validators=[Required()])
+
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://localhost/echo360"
+app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+db.Model.metadata.reflect(db.engine)
+manager = Manager(app)
+
+##ORM SQLAlchemy DB Model
+class question_answer(db.Model):
+    __table__ = db.Model.metadata.tables["question_answer"]
+
+    #__table_args__ = {'autoload': True, 'autoload_with': engine}
+
+    def __repr__(self):
+        return "Question: {}, Answer: {})".format(self.question, self.answer)
+
+
+##Flask-WTForm asking for user input
+class Question(FlaskForm):
+    question = StringField("")
     submit = SubmitField('Submit')
 
-    def validate_zip(self, field):
-        if len(field.data) != 5:  # REPLACE THIS LINE WITH SOMETHING ELSE
-            raise ValidationError("Your zipcode did not contain 5 integers")
+
+class Unanswered(FlaskForm):
+    a1 = TextAreaField()
+    a2 = TextAreaField()
+    a3 = TextAreaField()
+    a4 = TextAreaField()
+    a5 = TextAreaField()
+
+    submit = SubmitField('Submit')
 
 
+
+
+#########################
+##### Doc/Dist Code #####
+#########################
+def doc_dist(question):
+    #df = pd.read_csv('/Users/AllanChen/Desktop/MVP/ALPquestionsTXT_20180201.csv', encoding='latin-1')
+
+    #qa = df[['questionBody', 'questionResponse']]
+
+    questions = []
+    answers = []
+
+    for q in question_answer.query.all():
+        questions.append(q.question)
+    questions.pop(0)
+
+    for a in question_answer.query.all():
+        answers.append(a.answer)
+    answers.pop(0)
+
+    # breaks up all the words/punctuation in each question into their own list (aka tokenizes)
+    gen_docs = [[w.lower() for w in word_tokenize(text)] for text in questions]
+
+    # for each entry, it maps each word to a number
+    dictionary = gensim.corpora.Dictionary(gen_docs)
+
+    # creates tuple pairs of the word(their mapped number) and how many times they appear in the document
+    corpus = [dictionary.doc2bow(gen_doc) for gen_doc in gen_docs]
+
+    # tf-idf model of (num of entries, num of tokens/words/punc)
+    tf_idf = gensim.models.TfidfModel(corpus)
+    s = 0
+    for i in corpus:
+        s += len(i)
+
+    # matrix similarity: https://stackoverflow.com/questions/36578341/how-to-use-similarities-similarity-in-gensim
+    sims = gensim.similarities.MatrixSimilarity(tf_idf[corpus],
+                                                num_features=len(dictionary))
+
+    # do all of{ c2_tag }} the same above for the query you want to make
+    query_doc = [w.lower() for w in word_tokenize(question)]
+
+    query_doc_bow = dictionary.doc2bow(query_doc)
+
+    query_doc_tf_idf = tf_idf[query_doc_bow]
+
+    s = sims[query_doc_tf_idf]
+
+    max = s.max()
+
+    answer = answers[int(np.argmax(s))]
+
+    closest_question = questions[int(np.argmax(s))]
+
+    return closest_question, answer, max
+
+
+
+##Display form
 @app.route('/')
-def index():
-    return render_template("index.html")
+def question():
+    form = Question()
+    return render_template("question_form.html", form=form)
 
-@app.route('/zipcode')
-def weather_form():
-    weather = WeatherEntryForm()
-    return render_template("weather_form.html", form=weather)
 
-@app.route('/weather_result', methods=['GET', 'POST'])
+##Show inputted form question
+@app.route('/question_result', methods=['GET', 'POST'])
 def show_results():
-    form = WeatherEntryForm()
-    if request.method == "POST" and form.validate_on_submit():
-        zip = form.zip.data
-        r = requests.get('http://api.openweathermap.org/data/2.5/weather?zip=' + zip + ',us&appid=acb8954b723c21c5d82de826a487e67a')
-        r = r.json()
-        city = r["name"]
-        description = r['weather'][0]['description']
+    form = Question()
+    unanswered_lst = []
 
-        temp = 9/5 * (r['main']['temp'] - 273) + 32
+    if request.method == "POST":
 
-        return render_template('weather_results.html', city = city, description= description, temp = temp)
+        ## create a new list to take in questions that dont have answer in db, for every one question
+        ## create new view function to take in list
+        ## create new template HTML
+        ## update db
+
+        question = form.question.data
+        closet_question, answer, max_score = doc_dist(question)
+
+        if max_score < 0.5:
+            search_term = question.replace(" ", "+")
+            search_url = "https://www.google.com/search?q=" + str(search_term)
+            unanswered_lst.append(question)
+            session['unanswered_questions'] = unanswered_lst
+            print (unanswered_lst)
+
+            return render_template('return_question.html', question=question, search=search_url, form=form)
+
+        return render_template('return_question.html', closest_question=closet_question, question=question, answer=answer, form=form)
     flash(form.errors)
-    return redirect(url_for('weather_form'))
+    return redirect(url_for('question'))
 
-if __name__ == "__main__":
-    app.run()
+@app.route('/unanswered_questions', methods=['GET', 'POST'])
+def unanswered_questions():
+    form2 = Unanswered()
+    unanswered_lst = session.get('unanswered_questions', None)
+    q1 = unanswered_lst[0]
+
+    if request.method == "POST":
+        a1 = form2.a1.data
+
+        new = question_answer(question=q1,answer=a1)
+        db.session.add(new)
+        db.session.commit()
+
+    return render_template("unanswered_questions.html", unanswered_lst = unanswered_lst, form=form2, q1=q1)
+
+
+
+if __name__ == '__main__':
+
+    app.run(use_reloader=True, debug=True)  # The usual
