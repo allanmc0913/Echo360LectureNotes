@@ -53,9 +53,21 @@ class Unanswered(FlaskForm):
     a3 = TextAreaField()
     a4 = TextAreaField()
     a5 = TextAreaField()
-
     submit = SubmitField('Submit')
 
+class Authentication(FlaskForm):
+    pw = StringField("GSI/Professor, Please enter password: ", validators=[Required()])
+    submit = SubmitField()
+
+    def validate_pw(self, field):
+        if field.data != "echo360":
+            raise ValidationError("You have entered in the wrong password")
+
+
+class AddNew(FlaskForm):
+    q1 = StringField("Add question:", validators=[Required()])
+    a1 = StringField("Add answer:", validators=[Required()])
+    submit = SubmitField()
 
 
 
@@ -168,7 +180,38 @@ def unanswered_questions():
     return render_template("unanswered_questions.html", unanswered_lst = unanswered_lst, form=form2, q1=q1)
 
 
+@app.route('/staff_login', methods=['GET', 'POST'])
+def staff_login():
+    form = Authentication()
+    session['is_staff'] = False
+    if request.method == "POST" and form.validate_on_submit():
+        session['is_staff'] = True
+        return redirect(url_for("add_question_answer"))
+
+    errors = [v for v in form.errors.values()]
+    if len(errors) > 0:
+        flash("!!!! ERRORS IN FORM SUBMISSION - " + str(errors))
+    print (form.errors)
+    return render_template('staff_login.html', form=form)
+
+
+@app.route('/add_question_answer', methods=['GET', 'POST'])
+def add_question_answer():
+    form = AddNew()
+
+    is_staff = session.get('is_staff', None)
+
+    if is_staff is True and request.method == "POST" and form.validate_on_submit():
+
+        q1 = form.q1.data
+        a1 = form.a1.data
+        new = question_answer(question=q1, answer=a1)
+        db.session.add(new)
+        db.session.commit()
+        return redirect(url_for('add_question_answer'))
+
+    return render_template("add_question_answer.html", form=form)
 
 if __name__ == '__main__':
 
-    app.run(use_reloader=True, debug=True)  # The usual
+    app.run(use_reloader=True, debug=True)

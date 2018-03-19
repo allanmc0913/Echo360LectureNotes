@@ -1,0 +1,14 @@
+
+{% block content %}
+
+<h1>Add Question/Answer to Database!</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        {{ form.q1.label() }} {{ form.q1() }}
+        {{ form.a1.label() }} {{ form.a1() }}
+        {{ form.submit() }}
+    </form>
+
+{% endblock %}
+
+

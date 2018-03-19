@@ -1,0 +1,21 @@
+
+{% block content %}
+
+
+
+<h1>Staff Login</h1>
+    <form method="POST" action="{{ url_for('staff_login') }}">
+        {{ form.hidden_tag() }}
+        {{ form.pw.label() }} {{ form.pw() }}
+        {{ form.submit() }}
+    </form>
+
+<div>
+    {% for message in get_flashed_messages() %}
+        <strong style="color:red;">{{ message }}</strong>
+    {% endfor %}
+</div>
+
+{% endblock %}
+
+
