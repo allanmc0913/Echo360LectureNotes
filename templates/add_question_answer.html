@@ -1,6 +1,9 @@
 
 {% block content %}
 
+
+
+{% if is_staff %}
 <h1>Add Question/Answer to Database!</h1>
     <form method="POST">
         {{ form.hidden_tag() }}
@@ -8,7 +11,9 @@
         {{ form.a1.label() }} {{ form.a1() }}
         {{ form.submit() }}
     </form>
-
+{% else %}
+<h1>You have not logged in as a staff member</h1>
+{% endif %}
 {% endblock %}
 
 

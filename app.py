@@ -210,7 +210,7 @@ def add_question_answer():
         db.session.commit()
         return redirect(url_for('add_question_answer'))
 
-    return render_template("add_question_answer.html", form=form)
+    return render_template("add_question_answer.html", form=form, is_staff=is_staff)
 
 if __name__ == '__main__':
 
