@@ -40,6 +40,25 @@ class question_answer(db.Model):
     def __repr__(self):
         return "Question: {}, Answer: {})".format(self.question, self.answer)
 
+# class keyterms_defs(db.Model):
+#     # __table__ = "keyterms"
+#     id = db.Column(db.Integer, primary_key=True)
+#     keyterm = db.Column(db.String)
+#     definition = db.Column(db.String)
+#     #__table_args__ = {'autoload': True, 'autoload_with': engine}
+#
+#     def __repr__(self):
+#         return "Keyterm: {}, Definition: {})".format(self.keyterm, self.definition)
+
+class unanswered_question(db.Model):
+    __tablename__ = "unanswered_questions"
+    __table_args__ = {'extend_existing':True}
+    id = db.Column(db.Integer, primary_key=True)
+    question = db.Column(db.Text)
+    answer = db.Column(db.Text)
+
+
+
 
 ##Flask-WTForm asking for user input
 class Question(FlaskForm):
@@ -89,6 +108,11 @@ def doc_dist(question):
     for a in question_answer.query.all():
         answers.append(a.answer)
     answers.pop(0)
+
+    # for key in keyterms.query.all():
+    #     questions.append(key.keyterm)
+    # for k_def in keyterms.query.all():
+    #     answers.append(k_def.definition)
 
     # breaks up all the words/punctuation in each question into their own list (aka tokenizes)
     gen_docs = [[w.lower() for w in word_tokenize(text)] for text in questions]
@@ -158,6 +182,7 @@ def show_results():
             session['unanswered_questions'] = unanswered_lst
             print (unanswered_lst)
 
+
             return render_template('return_question.html', question=question, search=search_url, form=form)
 
         return render_template('return_question.html', closest_question=closet_question, question=question, answer=answer, form=form)
@@ -178,6 +203,8 @@ def unanswered_questions():
         db.session.commit()
 
     return render_template("unanswered_questions.html", unanswered_lst = unanswered_lst, form=form2, q1=q1)
+
+
 
 
 @app.route('/staff_login', methods=['GET', 'POST'])
@@ -213,4 +240,5 @@ def add_question_answer():
     return render_template("add_question_answer.html", form=form, is_staff=is_staff)
 
 if __name__ == '__main__':
+    db.create_all()
     app.run(use_reloader=True, debug=True)
