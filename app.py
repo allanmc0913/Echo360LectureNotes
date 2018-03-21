@@ -1,6 +1,6 @@
 from flask import Flask, request, render_template, url_for, flash, redirect, session
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, RadioField, IntegerField, ValidationError, TextAreaField
+from wtforms import StringField, SubmitField, RadioField, IntegerField, ValidationError, TextAreaField, PasswordField
 from wtforms.validators import Required
 from flask_sqlalchemy import SQLAlchemy
 
@@ -56,7 +56,7 @@ class Unanswered(FlaskForm):
     submit = SubmitField('Submit')
 
 class Authentication(FlaskForm):
-    pw = StringField("GSI/Professor, Please enter password: ", validators=[Required()])
+    pw = PasswordField("GSI/Professor, Please enter password: ", validators=[Required()])
     submit = SubmitField()
 
     def validate_pw(self, field):
@@ -213,5 +213,4 @@ def add_question_answer():
     return render_template("add_question_answer.html", form=form, is_staff=is_staff)
 
 if __name__ == '__main__':
-
     app.run(use_reloader=True, debug=True)

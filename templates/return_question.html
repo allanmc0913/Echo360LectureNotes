@@ -3,17 +3,17 @@
     <h1>Your question was: {{ question }}</h1>
 
     {% if closest_question %}
-    <h1>The closest matched question was: {{ closest_question }}</h1>
+    <p><strong>The closest matched question: </strong>{{ closest_question }}</p>
     {% else %}
     <h1>We could not find a close match to your question.  Performing Google Search</h1>
     {% endif %}
 
     {% if answer %}
-    <h1>Your answer is {{ answer }}</h1>
+        <p><strong>Your answer is: </strong> {{ answer }}</p>
     {% endif %}
 
     {% if search %}
-    <h1>Your answer is <a href={{ search }}>here</a></h1>
+        <p><strong>Your answer is: </strong><a href={{ search }}>here</a></p>
     {% endif %}
 
 
