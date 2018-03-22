@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Mina">
+    <title>Echo360 Chatbot</title>
+</head>
+    <body>
+
+    {% extends 'question_form.html' %}
+    {% block content %}
+        <h1>Your question was: {{ question }}</h1>
+
+        {% if closest_question %}
+        <p><strong>The closest matched question: </strong>{{ closest_question }}</p>
+        {% else %}
+        <h1>We could not find a close match to your question.  Performing Google Search</h1>
+        {% endif %}
+
+        {% if answer %}
+            <p><strong>Your answer is: </strong> {{ answer }}</p>
+        {% endif %}
+
+        {% if search %}
+            <p><strong>Your answer is: </strong><a href={{ search }}>here</a></p>
+        {% endif %}
+
+
+
+
+
+    {% endblock %}
+    </body>
+</html>
+

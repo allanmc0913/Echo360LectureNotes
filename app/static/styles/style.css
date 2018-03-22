@@ -1,0 +1,46 @@
+* {
+    font-family: "Mina";
+}
+
+
+html {
+    background-color: whitesmoke;
+}
+
+h1 {
+    color: gray;
+    text-align: center;
+    margin-top: 20%;
+}
+
+h3 {
+    text-align: center;
+}
+
+ul {
+    list-style: none;
+    padding-left: 0px;
+    text-align: center;
+}
+
+li {
+    margin-bottom: 5px;
+    font-size: 2.75vw;
+}
+
+li .login {
+    color: gray;
+    font-size: 2vw;
+}
+
+.logo {
+    width: 5vw;
+}
+
+footer {
+    font-size: 1.5vw;
+    position: fixed;
+    bottom: 3vw;
+    right: 0;
+    left: 0;
+}
