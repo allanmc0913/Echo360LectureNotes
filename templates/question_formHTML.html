@@ -1,0 +1,43 @@
+<!--
+{% extends 'base.html' %}
+
+{% block title %}Ask{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+
+{% block content %}
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="../static/styles/style.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mina">
+    </head>
+    <body>
+        <h1>Question Entry Form</h1>
+        <form method="POST" action="http://localhost:5000/question_result">
+            {{ form.csrf_token }}
+            {{ form.hidden_tag() }}
+            {% for message in get_flashed_messages() %}
+                {{ message }}
+            {% endfor %}
+            <p>{{ form.question.label }}{{ form.question(class_='question') }}</p>
+            {{ form.submit(class_='submit') }}
+        </form>
+        
+        <div class=nav>
+                <h2>Welcome to Echo360 Chatbot:</h2>
+                <ul>
+                    <li><a href="question_form.html">Ask a question</a></li>
+                    <li><a href="staff_login.html" class=login>Staff login</a></li>
+                </ul>
+            </div>
+    </body>
+    <footer>
+        <p align=center>Powered by 
+        <img src="../static/echo360.png" alt="Echo360 logo" class=logo>
+         and <img src="../static/umsi.jpg" alt="UMSI logo" class=logo></p>
+    </footer>
+</html>
+<!--{% endblock %}-->

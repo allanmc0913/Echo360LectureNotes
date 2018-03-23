@@ -2,8 +2,7 @@
 <html>
     <head>
         {% block head %}
-<!--        <link rel="stylesheet" type="text/css" href="{{ url_for('static',  filename='styles/style.css') }}">-->
-        <link rel="stylesheet" type="text/css" href="../static/styles/style.css">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static',  filename='styles/style.css') }}">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mina">
         <title>Echo360 Chatbot - {% block title %}{% endblock %}</title>
         {% endblock %}
@@ -18,7 +17,7 @@
                 <p>------------</p>
                 <h2>Welcome to Echo360 Chatbot:</h2>
                 <ul>
-                    <li><a href="{{ url_for('templates','question')}}">Ask a question</a></li>
+                    <li><a href="{{ url_for('question_form')}}">Ask a question</a></li>
                     <li><a href="{{ url_for('staff_login')}}" class=login>Staff login</a></li>
                 </ul>
             </div>
@@ -26,8 +25,8 @@
     </body>
     <footer>
         <p align=center>Powered by 
-        <img src="../static/echo360.png" alt="Echo360 logo" class=logo>
-         and <img src="../static/umsi.jpg" alt="UMSI logo" class=logo></p>
+        <img src="{{ url_for('static',  filename='echo360.png') }}" alt="Echo360 logo" class=logo>
+         and <img src="{{ url_for('static',  filename='umsi.jpg') }}" alt="UMSI logo" class=logo></p>
     </footer>
 </html>
 <!--adding in content/logistic note for demo-->

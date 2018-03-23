@@ -2,19 +2,21 @@
     font-family: "Mina";
 }
 
-
 html {
     background-color: whitesmoke;
 }
 
 h1 {
-    color: gray;
     text-align: center;
-    margin-top: 20%;
 }
 
 h2 {
     text-align: center;
+/*    font-size: 4vw;*/
+}
+
+.nav {
+    margin-top: 12vw;
 }
 
 ul {
@@ -25,22 +27,22 @@ ul {
 
 li {
     margin-bottom: 5px;
-    font-size: 3vw;
+/*    font-size: 3vw;*/
 }
 
 li .login {
     color: gray;
-    font-size: 2vw;
+/*    font-size: 2vw;*/
 }
 
 .logo {
-    width: 6vw;
+    width: 5.25vw;
 }
 
 footer {
-    font-size: 2vw;
+    font-size: 1.75vw;
     position: fixed;
-    bottom: 4vw;
+    bottom: 2vw;
     right: 0;
     left: 0;
 }
