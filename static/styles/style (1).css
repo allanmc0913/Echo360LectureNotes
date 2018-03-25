@@ -2,8 +2,14 @@
     font-family: "Mina";
 }
 
+
 html {
     background-color: whitesmoke;
+}
+
+header {
+    text-align: center;
+    font-size: 25px;
 }
 
 h1 {
@@ -12,11 +18,6 @@ h1 {
 
 h2 {
     text-align: center;
-/*    font-size: 4vw;*/
-}
-
-.nav {
-    margin-top: 12vw;
 }
 
 ul {
@@ -25,25 +26,33 @@ ul {
     text-align: center;
 }
 
+.pure-form {
+    text-align: center;
+}
+
 li {
     margin-bottom: 5px;
-/*    font-size: 3vw;*/
+    font-size: 20px;
 }
 
 li .login {
     color: gray;
-/*    font-size: 2vw;*/
+    font-size: 12px;
 }
 
 .logo {
-    width: 5.25vw;
+    width: 40px;
 }
 
 footer {
-    font-size: 1.75vw;
-    position: fixed;
-    bottom: 2vw;
+    font-size: 15px;
+    position: absolute;
+    bottom: 0;
     right: 0;
     left: 0;
 }
 
+.divider {
+    text-align: center;
+    padding: 10px;
+}
