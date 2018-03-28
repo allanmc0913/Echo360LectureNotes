@@ -183,9 +183,9 @@ def show_results():
             print (unanswered_lst)
 
 
-            return render_template('return_question.html', question=question, search=search_url, form=form)
+            return render_template('templates/return_question.html', question=question, search=search_url, form=form)
 
-        return render_template('return_question.html', closest_question=closet_question, question=question, answer=answer, form=form)
+        return render_template('templates/return_question.html', closest_question=closet_question, question=question, answer=answer, form=form)
     flash(form.errors)
     return redirect(url_for('question'))
 
@@ -202,7 +202,7 @@ def unanswered_questions():
         db.session.add(new)
         db.session.commit()
 
-    return render_template("unanswered_questions.html", unanswered_lst = unanswered_lst, form=form2, q1=q1)
+    return render_template("templates/unanswered_questions.html", unanswered_lst = unanswered_lst, form=form2, q1=q1)
 
 
 

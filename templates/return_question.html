@@ -1,25 +1,39 @@
-{% extends 'question_form.html' %}
-{% block content %}
-    <h1>Your question was: {{ question }}</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="style (1).css">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Mina">
+    <title>Echo360 Chatbot</title>
+</head>
+    <body>
 
-    {% if closest_question %}
-    <p><strong>The closest matched question: </strong>{{ closest_question }}</p>
-    {% else %}
-    <h1>We could not find a close match to your question.  Performing Google Search</h1>
-    {% endif %}
+    {% extends 'question_form.html' %}
+    {% block content %}
+        <div class="divider">
+        <h2>Your question was: {{ question }}</h2>
 
-    {% if answer %}
-        <p><strong>Your answer is: </strong> {{ answer }}</p>
-    {% endif %}
+        {% if closest_question %}
+        <p><strong>We found this similar question: </strong>{{ closest_question }}</p>
+        {% else %}
+        <h2>We could not find a close match to your question.  Performing Google Search</h2>
+        {% endif %}
 
-    {% if search %}
-        <p><strong>Your answer is: </strong><a href={{ search }}>here</a></p>
-    {% endif %}
+        {% if answer %}
+            <h3><strong>The answer is: </strong> {{ answer }}</h3>
+        {% endif %}
+
+        {% if search %}
+            <h3><strong>The answer is: </strong><a href={{ search }}>here</a></h3>
+        {% endif %}
+        </div>
 
 
 
 
 
-{% endblock %}
-
+    {% endblock %}
+    </body>
+</html>
 

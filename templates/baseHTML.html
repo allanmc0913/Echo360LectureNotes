@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% block head %}
+<!--        <link rel="stylesheet" type="text/css" href="{{ url_for('static',  filename='styles/style.css') }}">-->
+        <link rel="stylesheet" type="text/css" href="../static/styles/style (1).css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mina">
+        <title>Echo360 Chatbot - {% block title %}{% endblock %}</title>
+        {% endblock %}
+    </head>
+    <body>
+        <div id=content>
+
+            {% block content %}
+            {% endblock %}
+            
+            <div class=nav>
+                <p>------------</p>
+                <h2>Welcome to Echo360 Chatbot:</h2>
+                <ul>
+                    <li><a href="{{ url_for('templates','question')}}">Ask a question</a></li>
+                    <li><a href="{{ url_for('staff_login')}}" class=login>Staff login</a></li>
+                </ul>
+            </div>
+        </div>
+    </body>
+    <footer>
+        <p align=center>Powered by 
+        <img src="echo360.png" alt="Echo360 logo" class=logo>
+         and <img src="umsi.jpg" alt="UMSI logo" class=logo></p>
+    </footer>
+</html>
+<!--adding in content/logistic note for demo-->

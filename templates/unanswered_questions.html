@@ -1,9 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Mina">
+    <title>Echo360 Chatbot</title>
+</head>
+    <body>
+
 {% extends 'base.html' %}
 {% block content %}
 
 
 
-<h1>These are the unanswered questions from student</h1>
+<h1>These are the unanswered questions from students</h1>
     <form method="POST">
         {{ form.hidden_tag() }}
         <p>{{ q1 }}</p>
@@ -12,4 +23,5 @@
     </form>
 
 {% endblock %}
-
+    </body>
+</html>
