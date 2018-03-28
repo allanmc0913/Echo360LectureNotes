@@ -71,13 +71,13 @@ if __name__ == "__main__":
         classify = pickle.load(f)
 
     while True:
-        q = input("Enter a question: ")
+        q = input("\n\nEnter a question: ")
         closest, answer, percent = doc_dist(q)
 
-        type = classify.predict([q])
+        qtype = classify.predict([q])
 
-        print("\nThis is classified as a course {} question.".format(type[0]))
+        print("\nThis is classified as a course {} question.".format(qtype[0]))
         print("The closest answer we have for your question is:")
-        print("\tQ: {}\n\tA: {}".format(closest, answer))
+        print("\n\tQ: {}\n\tA: {}".format(closest, answer))
         print("With a {}% match rate".format(int(percent*100)))
         print("---------------------")
