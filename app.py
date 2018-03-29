@@ -23,7 +23,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'hardtoguessstring'
 
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://localhost/echo360"
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgres://ctextsoopbzvfh:f0569e5505fe6e3de7c1fcc08485a505865315a2593eadb3020c54c7a7e3f136@ec2-50-17-206-214.compute-1.amazonaws.com:5432/df76ak8ajgqgrr"
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
