@@ -8,3 +8,4 @@ gensim==3.1.0
 WTForms==2.1
 Flask_Script==2.0.6
 Flask==0.10.1
+psycopg2==2.7.3.2
