@@ -9,3 +9,12 @@ WTForms==2.1
 Flask_Script==2.0.6
 Flask==0.10.1
 psycopg2==2.7.3.2
+gunicorn==19.1.1
+Jinja2==2.7.3
+MarkupSafe==0.23
+Werkzeug==0.9.6
+argparse==1.2.1
+gunicorn==19.1.1
+itsdangerous==0.24
+requests==2.5.3
+beautifulsoup4==4.1.3
