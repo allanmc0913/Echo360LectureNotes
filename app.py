@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, url_for, flash, redirect, session
+from flask import Flask, request, render_template, url_for, flash, redirect, session, request
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, RadioField, IntegerField, ValidationError, TextAreaField, PasswordField
 from wtforms.validators import Required
@@ -21,8 +21,8 @@ import numpy as np
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'hardtoguessstring'
 
-
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgres://ctextsoopbzvfh:f0569e5505fe6e3de7c1fcc08485a505865315a2593eadb3020c54c7a7e3f136@ec2-50-17-206-214.compute-1.amazonaws.com:5432/df76ak8ajgqgrr"
+#postgres://ctextsoopbzvfh:f0569e5505fe6e3de7c1fcc08485a505865315a2593eadb3020c54c7a7e3f136@ec2-50-17-206-214.compute-1.amazonaws.com:5432/df76ak8ajgqgrr
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgres://localhost/echo360"
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -53,7 +53,7 @@ class unanswered_question(db.Model):
     __tablename__ = "unanswered_questions"
     __table_args__ = {'extend_existing':True}
     id = db.Column(db.Integer, primary_key=True)
-    question = db.Column(db.Text)
+    question = db.Column(db.Text, unique=True)
     answer = db.Column(db.Text)
 
 
@@ -188,23 +188,6 @@ def show_results():
     flash(form.errors)
     return redirect(url_for('question'))
 
-@app.route('/unanswered_questions', methods=['GET', 'POST'])
-def unanswered_questions():
-    form2 = Unanswered()
-    unanswered_lst = session.get('unanswered_questions', None)
-    q1 = unanswered_lst[0]
-
-    if request.method == "POST":
-        a1 = form2.a1.data
-
-        new = question_answer(question=q1,answer=a1)
-        db.session.add(new)
-        db.session.commit()
-
-    return render_template("unanswered_questions.html", unanswered_lst = unanswered_lst, form=form2, q1=q1)
-
-
-
 
 @app.route('/staff_login', methods=['GET', 'POST'])
 def staff_login():
@@ -238,6 +221,33 @@ def add_question_answer():
 
     return render_template("add_question_answer.html", form=form, is_staff=is_staff)
 
+@app.route('/unanswered_questions', methods=['GET', 'POST'])
+def unanswered_questions():
+    unanswered_lst = unanswered_question.query.filter_by(answer=None).all()
+    question_lst = []
+    is_staff = session.get('is_staff', None)
+
+    for item in unanswered_lst:
+        question = item.question
+        question_lst.append(question)
+
+    if request.method == "GET" and is_staff is True:
+        d = dict(request.args)
+        e = list(d.values())
+        for answer in e:
+            q_a = list(zip(question_lst, answer))
+
+            for pair in q_a:
+                result = unanswered_question.query.filter_by(question=pair[0]).first()
+                if result is not None:
+                    result.answer = pair[1]
+                    db.session.commit()
+                    return redirect(url_for("unanswered_questions"))
+
+    return render_template("unanswered_questions.html", question_lst=question_lst, is_staff=is_staff)
+
+
 if __name__ == '__main__':
     db.create_all()
     app.run(use_reloader=True, debug=True)
+    #manager.run()

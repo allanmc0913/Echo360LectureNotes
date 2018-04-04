@@ -12,16 +12,30 @@
 {% extends 'base.html' %}
 {% block content %}
 
+{% if is_staff %}
 
-
+{% if question_lst %}
 <h1>These are the unanswered questions from students</h1>
-    <form method="POST">
-        {{ form.hidden_tag() }}
-        <p>{{ q1 }}</p>
-        {{ form.a1() }}
-        {{ form.submit() }}
-    </form>
 
+{% else %}
+<h1>There are no unanswered questions from students</h1>
+
+{% endif %}
+
+    <form action="{{ url_for('unanswered_questions') }}" method="GET">
+        {% for question in question_lst %}
+            <p>{{ question }}</p>
+            <input type="text" name="answer" id="answer">
+        <br>
+        {% endfor %}
+
+        {% if question_lst %}
+            <input type="submit">
+        {% endif %}
+    </form>
+{% else %}
+    <h1>You have not logged in as a staff member</h1>
+{% endif %}
 {% endblock %}
     </body>
 </html>
