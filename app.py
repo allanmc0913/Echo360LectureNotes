@@ -9,7 +9,6 @@ import requests
 import json
 
 
-
 import pandas as pd
 import gensim
 from nltk.tokenize import word_tokenize
@@ -178,14 +177,14 @@ def show_results():
         if max_score < 0.5:
             search_term = question.replace(" ", "+")
             search_url = "https://www.google.com/search?q=" + str(search_term)
-            unanswered_lst.append(question)
-            session['unanswered_questions'] = unanswered_lst
-            print (unanswered_lst)
+            new = unanswered_question(question=question)
+            db.session.add(new)
+            db.session.commit()
 
 
-            return render_template('templates/return_question.html', question=question, search=search_url, form=form)
+            return render_template('return_question.html', question=question, search=search_url, form=form)
 
-        return render_template('templates/return_question.html', closest_question=closet_question, question=question, answer=answer, form=form)
+        return render_template('return_question.html', closest_question=closet_question, question=question, answer=answer, form=form)
     flash(form.errors)
     return redirect(url_for('question'))
 
@@ -202,7 +201,7 @@ def unanswered_questions():
         db.session.add(new)
         db.session.commit()
 
-    return render_template("templates/unanswered_questions.html", unanswered_lst = unanswered_lst, form=form2, q1=q1)
+    return render_template("unanswered_questions.html", unanswered_lst = unanswered_lst, form=form2, q1=q1)
 
 
 
