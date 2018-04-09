@@ -39,15 +39,11 @@ class question_answer(db.Model):
     def __repr__(self):
         return "Question: {}, Answer: {})".format(self.question, self.answer)
 
-# class keyterms_defs(db.Model):
-#     # __table__ = "keyterms"
-#     id = db.Column(db.Integer, primary_key=True)
-#     keyterm = db.Column(db.String)
-#     definition = db.Column(db.String)
-#     #__table_args__ = {'autoload': True, 'autoload_with': engine}
-#
-#     def __repr__(self):
-#         return "Keyterm: {}, Definition: {})".format(self.keyterm, self.definition)
+class key_def(db.Model):
+    __table__ = db.Model.metadata.tables["keyterm_definitions"]
+
+    def __repr__(self):
+        return "Keyterm: {}, Definition: {})".format(self.keyword, self.definition)
 
 class unanswered_question(db.Model):
     __tablename__ = "unanswered_questions"
@@ -55,8 +51,6 @@ class unanswered_question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     question = db.Column(db.Text, unique=True)
     answer = db.Column(db.Text)
-
-
 
 
 ##Flask-WTForm asking for user input
@@ -92,10 +86,9 @@ class AddNew(FlaskForm):
 #########################
 ##### Doc/Dist Code #####
 #########################
-def doc_dist(question):
-    #df = pd.read_csv('/Users/AllanChen/Desktop/MVP/ALPquestionsTXT_20180201.csv', encoding='latin-1')
 
-    #qa = df[['questionBody', 'questionResponse']]
+######### Doc Dist for Question/Answers###############
+def doc_dist(question):
 
     questions = []
     answers = []
@@ -108,10 +101,6 @@ def doc_dist(question):
         answers.append(a.answer)
     answers.pop(0)
 
-    # for key in keyterms.query.all():
-    #     questions.append(key.keyterm)
-    # for k_def in keyterms.query.all():
-    #     answers.append(k_def.definition)
 
     # breaks up all the words/punctuation in each question into their own list (aka tokenizes)
     gen_docs = [[w.lower() for w in word_tokenize(text)] for text in questions]
@@ -150,6 +139,52 @@ def doc_dist(question):
     return closest_question, answer, max
 
 
+########## Doc Dist for Keywords_Definitons##################
+def k_doc_dist(keyword):
+
+    keyterms = []
+    definitions = []
+
+    for k in key_def.query.all():
+        keyterms.append(k.keyword)
+    keyterms.pop(0)
+
+    for d in key_def.query.all():
+        definitions.append(d.definition)
+    definitions.pop(0)
+
+    gen_docs = [[w.lower() for w in word_tokenize(text)] for text in keyterms]
+
+    dictionary = gensim.corpora.Dictionary(gen_docs)
+
+    corpus = [dictionary.doc2bow(gen_doc) for gen_doc in gen_docs]
+
+    tf_idf = gensim.models.TfidfModel(corpus)
+    s = 0
+    for i in corpus:
+        s += len(i)
+
+    sims = gensim.similarities.MatrixSimilarity(tf_idf[corpus],
+                                                num_features=len(dictionary))
+
+    query_doc = [w.lower() for w in word_tokenize(keyword)]
+
+    query_doc_bow = dictionary.doc2bow(query_doc)
+
+    query_doc_tf_idf = tf_idf[query_doc_bow]
+
+    s = sims[query_doc_tf_idf]
+
+    max_score_k = s.max()
+
+    definition = definitions[int(np.argmax(s))]
+
+    closest_keyterm = keyterms[int(np.argmax(s))]
+
+    return closest_keyterm, definition, max_score_k
+
+
+
 
 ##Display form
 @app.route('/')
@@ -172,15 +207,28 @@ def show_results():
         ## update db
 
         question = form.question.data
-        closet_question, answer, max_score = doc_dist(question)
+        closet_question, answer, max_score = doc_dist(question)  #qa
+        closest_keyterm, definition, max_score_k = k_doc_dist(question)  #kd
 
-        if max_score < 0.5:
+
+        if max_score < max_score_k: #if qa < kd
+            closet_question = closest_keyterm
+            question = question
+            answer = definition
+
+        if max_score_k < max_score:  #if kd < qa
+            closet_question = closet_question
+            question = question
+            answer = answer
+
+        if (max_score < 0.5) and (max_score_k < 0.5):
             search_term = question.replace(" ", "+")
             search_url = "https://www.google.com/search?q=" + str(search_term)
             new = unanswered_question(question=question)
             db.session.add(new)
             db.session.commit()
-
+            # unanswered_lst.append(question)
+            # session['unanswered_questions'] = unanswered_lst
 
             return render_template('return_question.html', question=question, search=search_url, form=form)
 
